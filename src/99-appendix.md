@@ -1,6 +1,7 @@
-## Questions?
 
-### Thank you!
+# Thank you!
+
+### Questions?
 
 ### References {.allowframebreaks}
 
