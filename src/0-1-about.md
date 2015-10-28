@@ -3,8 +3,9 @@
 
 - Studying computer science
 - Day job: Web stuff
-    + JavaScript, JavaScript, JavaScript
 - Following Rust since early 2014
+    + [Official Rust books as PDF/EPUB](http://killercup.github.io/trpl-ebook/)
+    + [cargo-edit](https://github.com/killercup/cargo-edit)
 - [@killercup](http://twitter.com/killercup) (_everywhere_)
 - [pascalhertleif.de](http://pascalhertleif.de/)
 
