@@ -3,7 +3,7 @@
 
 - Studying computer science
 - Day job: Web stuff
-    + JavaScript is _everywhere_
+    + JavaScript, JavaScript, JavaScript
 - Following Rust since early 2014
 - [@killercup](http://twitter.com/killercup) (_everywhere_)
 - [pascalhertleif.de](http://pascalhertleif.de/)

@@ -3,7 +3,7 @@
 
 ---
 
-I'm not talking about editor/IDE plugins, but the tools those can be built upon
+I'm not talking about editor/IDE plugins, but the tools those can built upon
 
 ---
 
@@ -14,5 +14,3 @@ What I'm talking about:
 3. rustfmt
 4. racer
 5. Lints, lints everywhere
-6. travis-cargo
-

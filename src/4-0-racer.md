@@ -1,5 +1,5 @@
 
-## Autocomplete
+## Autocompletion
 
 ---
 
