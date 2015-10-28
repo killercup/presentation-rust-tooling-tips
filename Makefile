@@ -5,8 +5,9 @@ LIB_FOLDER ?= $(shell pwd)/lib
 IMAGES_FOLDER ?= $(INPUT_FOLDER)/figures
 
 REVEAL_TEMPLATE ?= $(LIB_FOLDER)/template.html
-MARKDOWN_OPTIONS ?= markdown
-FILTER_OPTIONS ?= --filter pandoc-citeproc
+MARKDOWN_OPTIONS ?= markdown-citations
+FILTER_OPTIONS ?=
+# FILTER_OPTIONS ?= --filter pandoc-citeproc
 
 LATEX_TEMPLATE ?= $(LIB_FOLDER)/template.tex
 LATEX_FILETYPE ?= pdf

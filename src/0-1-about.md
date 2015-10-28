@@ -5,6 +5,7 @@
 - Day job: Web stuff
     + JavaScript is _everywhere_
 - Following Rust since early 2014
+- [@killercup](http://twitter.com/killercup) (_everywhere_)
 - [pascalhertleif.de](http://pascalhertleif.de/)
 
 <aside class="notes">
