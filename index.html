@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="author" content="Pascal Hertleif – @killercup" />
+  <meta name="dcterms.date" content="2015-10-28" />
+  <title>Rust Tooling Tips</title>
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <link rel="stylesheet" href="lib/css/reveal.min.css"/>
+  <link rel="stylesheet" href="lib/css/theme/simple.css" id="theme">
+  <style type="text/css">
+    code{white-space: pre;}
+    pre{word-break: break-word;}
+  </style>
+  <style type="text/css">
+    /* Solarized Light */
+    pre.sourceCode { background-color: #FDF6E3; word-break: break-word; }
+    .sourceCode .kw { color: #d33682; }
+    .sourceCode .dt { color: #268BD2; }
+    .sourceCode .dv, .sourceCode .bn, .sourceCode .fl { color: #D33682; }
+    .sourceCode .ch { color: #DC322F; }
+    .sourceCode .st { color: #2AA198; }
+    .sourceCode .co { color: #93A1A1; }
+    .sourceCode .ot { color: #A57800; }
+    .sourceCode .al { color: #CB4B16; font-weight: bold; }
+    .sourceCode .fu { color: #268BD2; }
+    .sourceCode .re { }
+    .sourceCode .er { color: #D30102; font-weight: bold; }
+  </style>
+  <style type="text/css">
+    /* Custom styles */
+    [lang=de] q {quotes: "»" "«" "›" "‹"; font-style: normal;}
+
+    .reveal h1 {font-size: 2em;}
+
+    .reveal h1, .reveal h2, .reveal h3, .reveal h4, .reveal h5, .reveal h6 {-webkit-hyphens: auto; -moz-hyphens: auto; hyphens: auto;}
+    .reveal ul, .reveal ol, .reveal p {line-height: 1.4; margin-bottom: 0.4em;}
+
+    h1.title {color: #dc322f; font-size: 3.77em;}
+    h2.author {color: #586e75;}
+    h3.date {color: #93a1a1;}
+
+    .reveal section.slide {text-align: left;}
+
+    .reveal img {height: auto;}
+    .reveal figure {display: flex; align-items: flex-end;
+      display: -webkit-flex; display: -moz-flex; display: -ms-flex; display: -o-flex; -webkit-align-items: flex-end;}
+    .reveal figure img {/*flex: 1;*/ border: 0; box-shadow: none; margin: 0 1em 0;
+      /*-webkit-flex: 1;*/}
+    .reveal figure figcaption {font-size: 0.75em; margin-right: 2em;}
+
+    .reveal .citation {font-size: 0.6em; vertical-align: text-top;}
+
+    .reveal pre code {padding: 0;}
+    pre.sourceCode {box-shadow: none; font-size: 0.9em;}
+
+    .reveal .references {font-size: 0.6em; columns: 2;
+      -webkit-columns: 2; -moz-columns: 2;}
+    .references a.uri {word-break: break-all;}
+  </style>
+
+  <!-- If the query includes 'print-pdf', include the PDF print sheet -->
+  <script>
+    if( window.location.search.match( /print-pdf/gi ) ) {
+      var link = document.createElement( 'link' );
+      link.rel = 'stylesheet';
+      link.type = 'text/css';
+      link.href = 'lib/css/print/pdf.css';
+      document.getElementsByTagName( 'head' )[0].appendChild( link );
+    }
+  </script>
+  <!--[if lt IE 9]>
+  <script src="lib/lib/js/html5shiv.js"></script>
+  <![endif]-->
+</head>
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+<section>
+    <h1 class="title">Rust Tooling Tips</h1>
+    <h2 class="author">Pascal Hertleif – @killercup</h2>
+    <h3 class="date">2015-10-28</h3>
+</section>
+<section id="TOC">
+<h1>Table of contents</h1>
+<ul>
+<li><a href="#/overview">Overview</a></li>
+<li><a href="#/tools-built-in-to-rust">Tools built-in to Rust</a></li>
+<li><a href="#/cargo">Cargo</a></li>
+<li><a href="#/rustfmt">rustfmt</a></li>
+<li><a href="#/autocomplete">Autocomplete</a></li>
+<li><a href="#/lints-lints-everywhere">Lints, Lints Everywhere</a></li>
+<li><a href="#/thank-you">Thank you!</a></li>
+</ul>
+</section>
+
+<section id="pascal-hertleif" class="slide level3">
+<h1>Pascal Hertleif</h1>
+<ul>
+<li>Studying computer science</li>
+<li>Day job: Web stuff
+<ul>
+<li>JavaScript, JavaScript, JavaScript</li>
+</ul></li>
+<li>Following Rust since early 2014</li>
+<li><a href="http://twitter.com/killercup">@killercup</a> (<em>everywhere</em>)</li>
+<li><a href="http://pascalhertleif.de/">pascalhertleif.de</a></li>
+</ul>
+<aside class="notes">
+<ul>
+<li>ES2015 has <code>let</code>, <code>const</code>, making it easier for muscle memory to work for both JS and Rust</li>
+<li>Ask questions during or after the talk
+<ul>
+<li>Tip for after: Mention the slide number (e.g. 3-5)</li>
+</ul></li>
+</ul>
+</aside>
+</section>
+<section><section id="overview" class="titleslide slide level2"><h1>Overview</h1></section><section class="slide level3">
+
+<p>I’m not talking about editor/IDE plugins, but the tools those can be built upon</p>
+</section><section class="slide level3">
+
+<p>What I’m talking about:</p>
+<ol type="1">
+<li>Tools built-in to Rust</li>
+<li>A lot of Cargo</li>
+<li>rustfmt</li>
+<li>racer</li>
+<li>Lints, lints everywhere</li>
+</ol>
+</section></section>
+<section><section id="tools-built-in-to-rust" class="titleslide slide level2"><h1>Tools built-in to Rust</h1></section><section id="rustc" class="slide level3">
+<h1>rustc</h1>
+<p>Compiling Rust code:</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">rustc</span> -O src/main.rs</code></pre></div>
+<p>(Don’t forget <code>-O</code> if you want to enable compiler optimizations!)</p>
+</section><section class="slide level3">
+
+<p>Explain errors:</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">rustc</span> --explain E0106</code></pre></div>
+<p>Can also be found on <a href="https://doc.rust-lang.org/error-index.html" class="uri">https://doc.rust-lang.org/error-index.html</a></p>
+<p>(You can help extend those messages! See <a href="https://github.com/rust-lang/rust/issues/24407">Github Issue #24407</a>)</p>
+</section><section class="slide level3">
+
+<p>List built-in lints:</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">rustc</span> -W help</code></pre></div>
+</section><section id="rustdoc" class="slide level3">
+<h1>rustdoc</h1>
+<p>Render documentation like <a href="http://doc.rust-lang.org/std/" class="uri">http://doc.rust-lang.org/std/</a></p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">rustdoc</span> src/lib.rs</code></pre></div>
+</section><section id="rust-lldb-rust-gdb" class="slide level3">
+<h1>rust-lldb, rust-gdb</h1>
+<p>Debugger scripts based on <em>lldb</em> and <em>gdb</em> with Rust pretty printers</p>
+<p>Read more here: <a href="http://j.mp/rustlldb" class="uri">http://j.mp/rustlldb</a></p>
+</section></section>
+<section><section id="cargo" class="titleslide slide level2"><h1>Cargo</h1></section><section class="slide level3">
+
+<p>With Cargo, you can easily</p>
+<ul>
+<li>compile Rust projects</li>
+<li>manage dependecies</li>
+<li>render documentation</li>
+<li>run tests, benchmarks, examples</li>
+</ul>
+</section><section id="compiling-rust-code" class="slide level3">
+<h1>Compiling Rust Code</h1>
+</section><section class="slide level3">
+
+<h4 id="without-cargo">Without Cargo</h4>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">rustc</span> -O src/main.rs</code></pre></div>
+</section><section class="slide level3">
+
+<h4 id="lets-add-some-external-libraries">Let’s add some external libraries!</h4>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">rustc</span> src/bin/add/main.rs --crate-name cargo_add --crate-type bin -C opt-level=3 --cfg feature=<span class="dt">\&quot;</span>default<span class="dt">\&quot;</span> --out-dir /Users/pascal/Projekte/cargo-edit/target/release --emit=dep-info,link -L dependency=/Users/pascal/Projekte/cargo-edit/target/release -L dependency=/Users/pascal/Projekte/cargo-edit/target/release/deps --extern rustc_serialize=/Users/pascal/Projekte/cargo-edit/target/release/deps/librustc_serialize-7ff5bfc027146194.rlib --extern toml=/Users/pascal/Projekte/cargo-edit/target/release/deps/libtoml-7d16d978f944b9c6.rlib --extern curl=/Users/pascal/Projekte/cargo-edit/target/release/deps/libcurl-89d04227df05c87c.rlib --extern pad=/Users/pascal/Projekte/cargo-edit/target/release/deps/libpad-8b41ff1b2f475326.rlib --extern quick_error=/Users/pascal/Projekte/cargo-edit/target/release/deps/libquick_error-f3aa3728a185a974.rlib --extern docopt=/Users/pascal/Projekte/cargo-edit/target/release/deps/libdocopt-398ed9badedc4dd3.rlib --extern semver=/Users/pascal/Projekte/cargo-edit/target/release/deps/libsemver-41b5af09b2b837dc.rlib --extern cargo_edit=/Users/pascal/Projekte/cargo-edit/target/release/libcargo_edit.rlib -L native=/usr/lib -L native=/usr/local/Cellar/openssl/1.0.2d_1/lib -L native=/Users/pascal/Projekte/cargo-edit/target/release/build/openssl-sys-f0bee5fb97afc90d/out</code></pre></div>
+</section><section class="slide level3">
+
+<h4 id="with-cargo">With Cargo:</h4>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">cargo</span> build --release</code></pre></div>
+</section><section id="cargo-project-layout" class="slide level3">
+<h1>Cargo Project Layout</h1>
+</section><section class="slide level3">
+
+<pre class="plain"><code>▾ src/          # source files
+  lib.rs        # main entry point for libraries
+  main.rs       # main entry point for executables
+  ▾ bin/        # (optional) additional executables
+    *.rs
+▾ examples/     # (optional) examples
+  *.rs
+▾ tests/        # (optional) integration tests
+  *.rs
+▾ benches/      # (optional) benchmarks
+  *.rs</code></pre>
+</section><section class="slide level3">
+
+<pre class="plain"><code>▾ src/          # cargo (build|test|bench|doc)
+  lib.rs        # cargo build
+  main.rs       # cargo run
+  ▾ bin/
+    foo.rs      # cargo run --bin=foo
+▾ examples/
+  bar.rs        # cargo run --example=bar
+▾ tests/        # cargo test
+  *.rs
+▾ benches/      # cargo bench (unstable)
+  *.rs</code></pre>
+</section><section id="other-cargo-subcommands" class="slide level3">
+<h1>Other Cargo Subcommands</h1>
+</section><section class="slide level3">
+
+<h4 id="search">Search</h4>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">cargo</span> search proto</code></pre></div>
+<pre class="plain"><code>    Updating registry `https://github.com/rust-lang/crates.io-index`
+capnp (0.5.0)        Runtime library for Cap&#39;n Proto serialization
+capnpc (0.5.0)       Cap&#39;n Proto schema compiler plugin
+capnp-rpc (0.5.0)    Experimental Cap&#39;n Proto RPC layer</code></pre>
+</section><section class="slide level3">
+
+<h4 id="update">Update</h4>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">cargo</span> update</code></pre></div>
+<pre class="plain"><code>    Updating libc v0.1.2 -&gt; v0.1.10</code></pre>
+</section><section class="slide level3">
+
+<h4 id="install">Install</h4>
+<p><em>Really</em> fresh: Landed in nightly last week!</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">cargo</span> install rustfmt <span class="co">#soon</span>
+$ <span class="kw">cargo</span> install --git https://github.com/nrc/rustfmt.git <span class="co"># right now</span></code></pre></div>
+</section><section id="add-more-cargo-subcommands" class="slide level3">
+<h1>Add More Cargo Subcommands!</h1>
+</section><section class="slide level3">
+
+<h4 id="count-line-numbers">Count line numbers</h4>
+<p><a href="https://github.com/kbknapp/cargo-count">github.com/kbknapp/cargo-count</a></p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">cargo</span> count -e target -s ,</code></pre></div>
+<pre class="plain"><code>Gathering information...
+         Language  Files  Lines  Blanks  Comments  Code
+         --------  -----  -----  ------  --------  ----
+         TOML      5      104    19      0         85
+         Rust      17     1,832  279     144       1,409
+         --------  -----  -----  ------  --------  ----
+Totals:            22     1,936  298     144       1,494</code></pre>
+</section><section class="slide level3">
+
+<h4 id="outdated-dependencies">Outdated dependencies</h4>
+<p>Before you <code>cargo update</code>: <a href="https://github.com/kbknapp/cargo-outdated">github.com/kbknapp/cargo-outdated</a></p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">cargo</span> outdated</code></pre></div>
+<pre class="plain"><code>Checking for SemVer compatible updates...Done
+Checking for the latest updates...Done
+All dependencies are up to date, yay!</code></pre>
+</section><section class="slide level3">
+
+<h4 id="list-dependencies">List dependencies</h4>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">cargo</span> list</code></pre></div>
+<pre class="plain"><code>libc  0.1.2
+regex 0.1.41</code></pre>
+<p>(Part of <a href="https://github.com/killercup/cargo-edit">cargo-edit</a>.)</p>
+</section><section class="slide level3">
+
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">cargo</span> list --tree</code></pre></div>
+<pre class="plain"><code>├── libc (0.1.10)
+└── regex (0.1.41)
+    ├── aho-corasick (0.3.4)
+    │   └── memchr (0.1.6)
+    │       └── libc (0.1.10)
+    ├── memchr (0.1.6)
+    │   └── libc (0.1.10)
+    └── regex-syntax (0.2.2)</code></pre>
+</section><section class="slide level3">
+
+<h4 id="add-remove-dependencies">Add, remove dependencies</h4>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">cargo</span> add regex</code></pre></div>
+<p>Automatically adds the latest available version of <code>regex</code>.</p>
+<p>Part <a href="https://github.com/killercup/cargo-edit">github.com/killercup/cargo-edit</a> by yours truly.</p>
+<p>Also contains <code>cargo rm</code>.</p>
+</section></section>
+<section><section id="rustfmt" class="titleslide slide level2"><h1>rustfmt</h1></section><section class="slide level3">
+
+<p>Auto­mat­i­cally refor­mat your Rust code to make it eas­ily parseable by humans</p>
+<p>Get it from <a href="https://github.com/nrc/rustfmt">github.com/nrc/rustfmt</a></p>
+</section><section id="the-one-true-rust-style" class="slide level3">
+<h1>The One True Rust Style?</h1>
+<aside class="notes">
+<ul>
+<li>Nothing is set in stone, RFCs need to be written to recommend any style.</li>
+<li>Rustfmt allows us to easily switch styles.</li>
+</ul>
+</aside>
+</section><section id="current-state" class="slide level3">
+<h1>Current state</h1>
+<p>Good results, can be tweaked with some options.</p>
+</section><section class="slide level3">
+
+<h4 id="before">Before</h4>
+<pre class="plain"><code>fn main() { return doughnutFryer.start() .then(|_| _frostingGlazer.start()) .then(|_| Future.wait([ _conveyorBelts.start(), sprinkleSprinkler.start(), sauceDripper.start() ])) .catchError(cannotGetConveyorBeltRunning) .then(|_| tellEveryoneDonutsAreJustAboutDone()) .then(|_| Future.wait([ croissantFactory.start(), _giantBakingOvens.start(), butterbutterer.start() ]) .catchError(_handleBakingFailures) .timeout(scriptLoadingTimeout, _handleBakingFailures) .catchError(cannotGetConveyorBeltRunning)) .catchError(cannotGetConveyorBeltRunning) .then(|_| { _logger.info(&quot;Let&#39;s eat!&quot;); }); }</code></pre>
+<p>(From <a href="https://github.com/nrc/rustfmt/issues/296">nrc/rustfmt#296</a>)</p>
+</section><section class="slide level3">
+
+<h4 id="after">After</h4>
+<pre class="plain"><code>fn main() {
+    doughnutFryer.start()
+                 .then(|_| _frostingGlazer.start())
+                 .then(|_| {
+                     Future.wait(_conveyorBelts.start(),
+                                 sprinkleSprinkler.start(),
+                                 sauceDripper.start())
+                 })
+                 .catchError(cannotGetConveyorBeltRunning)
+                 .then(|_| tellEveryoneDonutsAreJustAboutDone())
+                 .then(|_| {
+                     Future.wait(croissantFactory.start(),
+                                 _giantBakingOvens.start(),
+                                 butterbutterer.start())
+                           .catchError(_handleBakingFailures)
+                           .timeout(scriptLoadingTimeout, _handleBakingFailures)
+                           .catchError(cannotGetConveyorBeltRunning)
+                 })
+                 .catchError(cannotGetConveyorBeltRunning)
+                 .then(|_| {
+                     _logger.info(&quot;Let&#39;s eat!&quot;);
+                 });
+}</code></pre>
+</section></section>
+<section><section id="autocomplete" class="titleslide slide level2"><h1>Autocomplete</h1></section><section class="slide level3">
+
+<p>That one IDE feature that we all want outside of IDEs</p>
+</section><section id="racer" class="slide level3">
+<h1>Racer</h1>
+<p>Currently the only working option for Rust autocomplete</p>
+<p><a href="https://github.com/phildawes/racer">github.com/phildawes/racer</a></p>
+</section><section class="slide level3">
+
+<p>Core team (@nrc) wants to change compiler, add tools to offer autocomplete-as-a-service</p>
+<p>See <a href="https://www.rust-lang.org/ides.html">rust-lang.org/ides.html</a></p>
+</section></section>
+<section><section id="lints-lints-everywhere" class="titleslide slide level2"><h1>Lints, Lints Everywhere</h1></section><section class="slide level3">
+
+<p>Lints are basically compiler warning plugins</p>
+</section><section class="slide level3">
+
+<p><code>rustc</code> already has a few, some disabled by default</p>
+<p><code>rustc -W help</code> shows a list</p>
+<aside class="notes">
+<pre class="plain"><code>missing_docs,
+missing_debug_implementations, missing_copy_implementations,
+trivial_casts, trivial_numeric_casts,
+unsafe_code,
+unstable_features,
+unused_import_braces, unused_qualifications</code></pre>
+</aside>
+</section><section id="my-favorite-lint" class="slide level3">
+<h1>My favorite lint</h1>
+<p><q>missing docs</q>: detects missing documentation for public members</p>
+<p><code>#![deny(missing_docs)]</code> makes every crate better</p>
+</section><section id="clippy" class="slide level3">
+<h1>Clippy</h1>
+<p>Crate that contains additional lints, e.g. <code>approx_constant</code> or <code>needless_return</code></p>
+<p>Get it from <a href="https://github.com/Manishearth/rust-clippy">github.com/Manishearth/rust-clippy</a></p>
+<aside class="notes">
+<ul>
+<li><q>the approximate of a known float constant (in <code>std::f64::consts</code> or <code>std::f32::consts</code>) is found; suggests to use the constant</q></li>
+<li>If only Andre (@llogiq) was here to talk about it!</li>
+</ul>
+</aside>
+</section><section class="slide level3">
+
+<p>I wrote an article about this last weekend. Then this happend:</p>
+<figure>
+<img src="figures/codeclimate_tweet.png" alt="" />
+</figure>
+<aside class="notes">
+<ul>
+<li>CodeClimate does static analysis for Ruby, JavaScript, PHP, Python</li>
+<li>Rates your modules based on complexity and code style</li>
+</ul>
+</aside>
+</section><section class="slide level3">
+
+<figure>
+<img src="figures/clippy_cyclomatic.png" alt="" />
+</figure>
+</section><section class="slide level3">
+
+</section></section>
+<section><section id="thank-you" class="titleslide slide level1"><h1>Thank you!</h1></section><section id="questions" class="slide level3">
+<h1>Questions?</h1>
+</section></section>
+    </div>
+  </div>
+
+  <script src="lib/lib/js/head.min.js"></script>
+  <script src="lib/js/reveal.min.js"></script>
+  <script>
+      // Full list of configuration options available here:
+      // https://github.com/hakimel/reveal.js#configuration
+      Reveal.initialize({
+        width: 1000,
+        height: 560,
+        margin: 0.1,
+
+        minScale: 0.1,
+        maxScale: 3.0,
+
+        controls: true,
+        touch: true,
+        progress: true,
+        slideNumber: true,
+        history: true,
+        center: true,
+        theme: 'solarized', // available themes are in /css/theme
+        transition: 'linear', // default/cube/page/concave/zoom/linear/fade/none
+
+        // Optional libraries used to extend on reveal.js
+        dependencies: [
+          { src: 'lib/lib/js/classList.js', condition: function() { return !document.body.classList; } },
+//          { src: 'lib/plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+          { src: 'lib/plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } },
+//          { src: 'lib/plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+//          { src: 'lib/plugin/search/search.js', async: true, condition: function() { return !!document.body.classList; }, }
+//          { src: 'lib/plugin/remotes/remotes.js', async: true, condition: function() { return !!document.body.classList; } }
+]});
+    </script>
+    </body>
+</html>
